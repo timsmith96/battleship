@@ -1,0 +1,38 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+h1 {
+  text-align: center;
+}
+
+#gameboards-container {
+  display: flex;
+  gap: 100px;
+  margin: 0 auto;
+  max-width: 1000px;
+  justify-content: center;
+  margin-top: 200px;
+}
+
+.gameboard {
+  display: grid;
+  grid-template-columns: repeat(10, 1fr);
+  width: 311px;
+  background-color: #000000;
+  grid-gap: 1px;
+  border: 1px solid #000000;
+}
+
+#cpu-gameboard .cell:hover {
+  background-color: #000000;
+  cursor: pointer;
+}
+
+.cell {
+  height: 30px;
+  width: 30px;
+  background-color: #ffffff;
+}
