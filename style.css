@@ -36,3 +36,7 @@ h1 {
   width: 30px;
   background-color: #ffffff;
 }
+
+.ship-cell {
+  background-color: red !important;
+}
