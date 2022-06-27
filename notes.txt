@@ -1,0 +1,10 @@
+could have made mapping between the cells displayed on the page and the gameboard easier. Instead I had to find the formula const square = cpuCells[+y * 10 + +x], which works but seems a little clunky
+
+learnt about the importance of splitting up code - one job per thing
+
+0,0 = 0
+1,1 = 12
+5,4 =
+
+
+((y + 1) * 9) + (x-1)

@@ -150,7 +150,7 @@ test('gameboard can deal with multiple attacks to the same ship', () => {
   ]);
 });
 
-test('gameboard can save missed attacks', () => {
+ctest('gameboard can save missed attacks', () => {
   const gameboard1 = gameboardFactory();
   gameboard1.placeShip(4, [5, 2]);
   gameboard1.recieveAttack([1, 8]);

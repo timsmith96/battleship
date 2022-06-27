@@ -82,10 +82,11 @@ const gameboardFactory = () => {
     const id = target.id;
     if (typeof target === 'object') {
       target.hit(x - shipLocations[id].xStart);
+      gameboard[y][x] = 'hit a ship';
     } else {
       missedAttacks.push([x, y]);
+      gameboard[y][x] = 'X';
     }
-    gameboard[y][x] = 'hit';
   };
 
   return {
