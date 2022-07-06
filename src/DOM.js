@@ -3,14 +3,33 @@ import { humanPlayer } from './players';
 const DOM = (() => {
   const humanBoardContainer = document.getElementById('human-gameboard');
   const cpuBoardContainer = document.getElementById('cpu-gameboard');
+  const changeAxis = document.querySelector('#change-axis');
 
-  let xAxisSelected = false;
+  document.addEventListener('DOMContentLoaded', function () {
+    xAxisSelected = true;
+    changeAxis.addEventListener('click', () => {
+      xAxisSelected = xAxisSelected === true ? false : true;
+      changeAxis.textContent =
+        changeAxis.textContent === 'X axis' ? 'Y axis' : 'X axis';
+    });
+  });
+
+  let xAxisSelected = true;
+
+  const getAxis = () => {
+    return xAxisSelected;
+  };
+
+  const setAxis = (rand) => {
+    xAxisSelected = rand ? true : false;
+  };
 
   let shipsPlaced = false;
 
   const onload = (humanGameboard, cpuGameboard, human, computer) => {
     renderGameboard(humanGameboard, true);
     renderGameboard(cpuGameboard, false);
+    updateInstructions(humanGameboard.getShipType());
   };
 
   const updateCell = (target, coords, gameboard) => {
@@ -82,7 +101,6 @@ const DOM = (() => {
   };
 
   const shipOverlap = (cellsToColor, cellsArray) => {
-    console.log(cellsToColor);
     return cellsToColor.some((cell) => {
       return cellsArray[cell].classList.contains('ship-cell');
     });
@@ -125,7 +143,41 @@ const DOM = (() => {
   };
 
   const removeColor = (cells) =>
-    cells.forEach((cell) => (cell.style.backgroundColor = 'white'));
+    cells.forEach((cell) => (cell.style.backgroundColor = '#1e3a8a'));
+
+  const updateInstructions = (shipType) => {
+    const shipText = document.getElementById('ship-type');
+    shipText.textContent = shipType;
+  };
+
+  const updateNarration = (narration, attackResult, otherPlayer) => {
+    const text = document.getElementById(narration);
+    const result = document.getElementById('result-of-attack');
+    const otherPlayerText = document.getElementById(otherPlayer);
+    otherPlayerText.style.visibility = 'hidden';
+    if (narration === 'human-narration') {
+      text.textContent = 'You fire a shot into enemy waters... ';
+      text.style.visibility = 'visible';
+    } else if (narration === 'cpu-narration') {
+      text.textContent = 'The enemy fires a shot into your waters...';
+      text.style.visibility = 'visible';
+    }
+    setTimeout(() => {
+      result.style.visibility = 'visible';
+      result.textContent = attackResult;
+    }, 1000);
+    result.style.visibility = 'hidden';
+  };
+
+  const editText = (idToEdit, newText) => {
+    const toEdit = document.getElementById(idToEdit);
+    toEdit.textContent = newText;
+  };
+
+  const hideElement = (idToHide) => {
+    const toHide = document.getElementById(idToHide);
+    toHide.style.visibility = 'hidden';
+  };
 
   return {
     renderGameboard,
@@ -140,6 +192,12 @@ const DOM = (() => {
     shipsPlaced,
     placeShip,
     addClass,
+    getAxis,
+    setAxis,
+    updateInstructions,
+    updateNarration,
+    editText,
+    hideElement,
   };
 })();
 

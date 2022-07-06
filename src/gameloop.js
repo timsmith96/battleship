@@ -6,6 +6,22 @@ const gameloop = () => {
   const human = humanPlayer();
   const computer = cpuPlayer();
 
+  const shipIconsX = [
+    './destroyer.png',
+    './submarine.png',
+    './cruiser.png',
+    './battleship.png',
+    './warship.png',
+  ];
+
+  const shipIconsY = [
+    './destroyer-y.png',
+    './submarine-y.png',
+    './cruiser-y.png',
+    './battleship-y.png',
+    './warship-y.png',
+  ];
+
   const humanGameboard = gameboardFactory();
   const cpuGameboard = gameboardFactory();
 
@@ -14,41 +30,159 @@ const gameloop = () => {
   const cpuCells = document.querySelectorAll('.clickable-cell');
   const humanCells = Array.from(document.querySelectorAll('.human-cell'));
 
-  cpuCells.forEach((cell) => {
-    cell.addEventListener('mouseover', (e) => {
+  humanCells.forEach((cell) => {
+    cell.addEventListener('mouseenter', (e) => {
       const [x, y] = DOM.getCoords(e);
-      let cellsToColor = DOM.convertCoordsToCells([x, y], 4);
-      if (DOM.isValidShipHover(cellsToColor, [x, y], cpuCells)) {
-        DOM.colorCells(cellsToColor, cpuCells, 'red');
+      let startingCell = DOM.convertCoordsToCells([x, y], 1);
+      let cellsToColor = DOM.convertCoordsToCells(
+        [x, y],
+        humanGameboard.getShipLength()
+      );
+      if (DOM.isValidShipHover(cellsToColor, [x, y], humanCells)) {
+        const img = document.createElement('img');
+        const axis = DOM.getAxis();
+        if (axis) {
+          img.src = shipIconsX[shipIconsX.length - 1];
+          img.id = shipIconsX[shipIconsX.length - 1];
+        } else {
+          img.src = shipIconsY[shipIconsY.length - 1];
+          img.id = shipIconsY[shipIconsY.length - 1];
+        }
+        humanCells[startingCell].appendChild(img);
+        humanCells[startingCell].style.backgroundColor = '#2563eb';
+        for (let i = 1; i < cellsToColor.length; i++) {
+          humanCells[cellsToColor[i]].style.backgroundColor = 'transparent';
+        }
       }
     });
 
-    cell.addEventListener('mouseout', (e) => {
-      DOM.removeColor(cpuCells);
+    cell.addEventListener('mouseleave', (e) => {
+      if (cell.classList.contains('no-remove')) {
+        return;
+      } else {
+        cell.innerHTML = '';
+        cell.style.backgroundColor = '#0284c7';
+        humanCells.forEach((cell) => {
+          if (!cell.classList.contains('no-remove')) {
+            cell.style.backgroundColor = '#334155';
+          }
+        });
+      }
     });
 
     cell.addEventListener('click', (e) => {
-      const coords = DOM.getCoords(e);
-      if (!DOM.shipsPlaced) {
-        let cellsToColor = DOM.convertCoordsToCells(coords, 4);
-        DOM.addClass(cellsToColor, cpuCells, 'ship-cell');
-      } else {
-        human.makeMove(cpuGameboard, coords);
-        DOM.updateCell(e.target, coords, cpuGameboard);
-        const [x, y] = computer.makeMove(humanGameboard);
-        const target = humanCells.find(
-          (cell) => cell.dataset.x === String(x) && cell.dataset.y === String(y)
-        );
-        DOM.updateCell(target, [x, y], humanGameboard);
-        if (cpuGameboard.allShipsSunk() && humanGameboard.allShipsSunk()) {
-          console.log('Game over! All ships sunk');
+      const axis = DOM.getAxis();
+      const x = e.currentTarget.dataset.x;
+      const y = e.currentTarget.dataset.y;
+      const coords = [x, y];
+      let cellsToColor = DOM.convertCoordsToCells(
+        coords,
+        humanGameboard.getShipLength()
+      );
+      let startingCell = DOM.convertCoordsToCells([x, y], 1);
+      if (
+        !humanGameboard.allShipsPlaced() &&
+        DOM.isValidShipHover(cellsToColor, coords, humanCells)
+      ) {
+        const currentShipLength = humanGameboard.getShipLength();
+        let cellsToColor = DOM.convertCoordsToCells(coords, currentShipLength);
+        DOM.addClass(cellsToColor, humanCells, 'ship-cell');
+        if (axis) {
+          const img = document.getElementById(
+            shipIconsX[shipIconsX.length - 1]
+          );
+          img.src = shipIconsX[shipIconsX.length - 1];
+        } else {
+          const img = document.getElementById(
+            shipIconsY[shipIconsY.length - 1]
+          );
+          img.src = shipIconsY[shipIconsY.length - 1];
         }
+        for (let i = 1; i < cellsToColor.length; i++) {
+          humanCells[cellsToColor[i]].style.backgroundColor = 'transparent';
+          humanCells[cellsToColor[i]].classList.add('no-remove');
+        }
+        humanCells[startingCell].classList.add('no-remove');
+        humanGameboard.placeShip(currentShipLength, coords);
+        humanGameboard.removeShip();
+        shipIconsX.pop();
+        shipIconsY.pop();
+        let shipType = humanGameboard.getShipType();
+        DOM.editText('instruction', `Please place your ${shipType}...`);
+      }
+      if (humanGameboard.allShipsPlaced()) {
+        DOM.editText(
+          'instruction',
+          'All ships placed - game on! Take your shot...'
+        );
+        DOM.hideElement('change-axis');
+        humanCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
       }
     });
   });
 
-  cpuGameboard.placeShip(3, [3, 8]);
-  humanGameboard.placeShip(4, [2, 2]);
+  cpuCells.forEach((cell) => {
+    cell.addEventListener('click', (e) => {
+      if (humanGameboard.allShipsPlaced()) {
+        cpuCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
+        DOM.hideElement('instruction');
+        const coords = DOM.getCoords(e);
+        let attackResult = human.makeMove(cpuGameboard, coords);
+        setTimeout(() => {
+          // DOM.updateCell(e.target, coords, cpuGameboard);
+          if (attackResult === 'SHIP HIT!') {
+            e.target.classList.add('hit');
+          } else if (attackResult === 'MISS!') {
+            e.target.classList.add('miss');
+          }
+        }, 1000);
+        DOM.updateNarration('human-narration', attackResult, 'cpu-narration');
+        setTimeout(() => {
+          const arr = computer.makeMove(humanGameboard);
+          const [x, y] = arr[0];
+          attackResult = arr[1];
+          const target = humanCells.find(
+            (cell) =>
+              cell.dataset.x === String(x) && cell.dataset.y === String(y)
+          );
+          DOM.updateNarration('cpu-narration', attackResult, 'human-narration');
+          setTimeout(() => {
+            console.log(attackResult);
+            // DOM.updateCell(target, [x, y], humanGameboard);
+            if (attackResult === 'SHIP HIT!') {
+              target.classList.add('hit');
+              // target.firstChild.classList.add('hit');
+            } else if (attackResult === 'MISS!') {
+              target.classList.add('miss');
+            }
+          }, 1000);
+          setTimeout(() => {
+            DOM.editText('cpu-narration', 'take your shot...');
+            DOM.hideElement('result-of-attack');
+            cpuCells.forEach((cell) => {
+              if (
+                !(
+                  cell.classList.contains('hit') ||
+                  cell.classList.contains('miss')
+                )
+              ) {
+                cell.style.pointerEvents = 'auto';
+              }
+            });
+          }, 3000);
+        }, '2500');
+        if (cpuGameboard.allShipsSunk() || humanGameboard.allShipsSunk()) {
+          console.log('Game over! All ships sunk');
+        }
+      } else {
+        return;
+      }
+    });
+  });
+
+  for (let i = 0; i < 5; i++) {
+    cpuGameboard.placeCpuShips(cpuCells);
+  }
 };
 
 gameloop();

@@ -1,11 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Black+Ops+One&family=Ultra&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
+body {
+  background-color: #3b82f6;
+}
+
 h1 {
   text-align: center;
+  font-family: 'Black Ops One', cursive;
+  font-size: 100px;
+  padding: 20px;
+}
+
+.text-container {
+  margin-bottom: 50px;
+  position: relative;
+  padding: 50px;
+}
+
+#instruction {
+  font-family: 'Black Ops One', cursive;
+  text-align: center;
+  font-size: 25px;
+}
+
+#human-narration,
+#cpu-narration {
+  font-family: 'Black Ops One', cursive;
+  font-size: 25px;
+  position: absolute;
+  top: 30px;
+  left: 50%;
+  transform: translate(-50%, 0);
+}
+
+#result-of-attack {
+  font-size: 40px;
+  text-align: center;
+  font-family: 'Black Ops One', cursive;
+  position: absolute;
+  top: 75px;
+  left: 50%;
+  transform: translate(-50%, 0);
 }
 
 #gameboards-container {
@@ -14,29 +55,96 @@ h1 {
   margin: 0 auto;
   max-width: 1000px;
   justify-content: center;
-  margin-top: 200px;
 }
 
 .gameboard {
   display: grid;
   grid-template-columns: repeat(10, 1fr);
   width: 311px;
-  background-color: #000000;
+  background-color: #2563eb;
   grid-gap: 1px;
   border: 1px solid #000000;
+  z-index: -5;
 }
 
 #cpu-gameboard .cell:hover {
-  background-color: #000000;
-  cursor: pointer;
+  background-color: #fff;
+  cursor: crosshair;
 }
 
 .cell {
   height: 30px;
   width: 30px;
-  background-color: #ffffff;
+  background-color: #334155;
+  z-index: 1;
 }
 
-.ship-cell {
-  background-color: red !important;
+#human-narration {
+  visibility: hidden;
+}
+
+#cpu-narration {
+  visibility: hidden;
+}
+
+#result-of-attack {
+  visibility: hidden;
+}
+
+#change-axis {
+  margin: 0 auto;
+  display: block;
+  margin-top: 10px;
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid black;
+  font-family: 'Black Ops One', cursive;
+  font-size: 20px;
+  background: #fff;
+}
+
+#change-axis:hover {
+  cursor: pointer;
+  font-family: 'Black Ops One', cursive;
+  background: #1e3a8a;
+  color: #fff;
+}
+
+.label {
+  font-size: 20px;
+  text-align: center;
+  text-transform: uppercase;
+  padding: 10px;
+  color: #fff;
+  letter-spacing: 2px;
+  font-family: 'Black Ops One', cursive;
+}
+
+.clickable-cell.ship-cell {
+  background-color: #1e3a8a;
+}
+
+.human-cell.ship-cell {
+  background-color: #2563eb;
+}
+
+.hit::after {
+  content: '';
+  background-image: url('./explosion.png');
+  display: block;
+  position: absolute;
+  width: 30px;
+  height: 30px;
+  z-index: 1000;
+  top: 0;
+  left: 0;
+}
+
+.cell.human-cell,
+.cell.clickable-cell {
+  position: relative;
+}
+
+.miss {
+  background: #111827 !important;
 }
