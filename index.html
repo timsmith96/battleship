@@ -5,13 +5,29 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./style.css" />
+    <link rel="icon" href="./favicon.svg" type="image/svg+xml" />
     <title>Battleship</title>
   </head>
   <body>
     <h1>Battleship</h1>
+    <div class="text-container">
+      <h3 id="instruction">
+        Welcome! Please place your <span id="ship-type"></span>
+      </h3>
+      <h3 id="human-narration">You fire a shot into enemy waters...</h3>
+      <h3 id="cpu-narration">The enemy fires a shot into your waters...</h3>
+      <h2 id="result-of-attack">miss</h2>
+    </div>
     <div id="gameboards-container">
-      <div id="human-gameboard" class="gameboard"></div>
-      <div id="cpu-gameboard" class="gameboard"></div>
+      <div class="container">
+        <p class="label">Friendly waters</p>
+        <div id="human-gameboard" class="gameboard"></div>
+        <button id="change-axis">X axis</button>
+      </div>
+      <div class="container">
+        <p class="label">Enemy waters</p>
+        <div id="cpu-gameboard" class="gameboard"></div>
+      </div>
     </div>
     <script src="./runtime.js"></script>
     <script src="./main.js"></script>
