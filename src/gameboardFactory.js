@@ -91,7 +91,6 @@ const gameboardFactory = () => {
     let cellsToColor = DOM.convertCoordsToCells([x, y], currentShipLength);
     if (DOM.isValidShipHover(cellsToColor, [x, y], cpuCells)) {
       placeShip(currentShipLength, [x, y]);
-      DOM.addClass(cellsToColor, cpuCells, 'ship-cell');
       shipsToPlace.pop();
     } else {
       placeCpuShips(cpuCells);
