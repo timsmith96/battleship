@@ -1,5 +1,6 @@
 import { shipFactory } from './shipFactory';
 import { DOM } from './DOM';
+import { cpuPlayer } from './players';
 
 const gameboardFactory = () => {
   const gameboard = [
@@ -55,6 +56,15 @@ const gameboardFactory = () => {
     });
   };
 
+  const isArrayInArray = (arr, item) => {
+    const itemAsString = JSON.stringify(item);
+
+    const contains = arr.some((element) => {
+      return JSON.stringify(element) === itemAsString;
+    });
+    return contains;
+  };
+
   const saveLocation = (shipId, shipLength, coordinatesArray) => {
     const [x, y] = coordinatesArray;
     shipLocations[shipId] = { xStart: x, xEnd: x + (shipLength - 1) };
@@ -96,15 +106,19 @@ const gameboardFactory = () => {
     if (typeof target === 'object') {
       target.hit(x - shipLocations[id].xStart);
       gameboard[y][x] = 'hit a ship!';
-      result = 'SHIP HIT!';
+      if (target.isSunk()) {
+        result = 'SHIP SUNK!';
+      } else {
+        result = 'SHIP HIT!';
+      }
     } else if (target === 'hit a ship') {
       gameboard[y][x] = 'hit a ship';
       result = 'already hit a ship';
     } else {
-      missedAttacks.push([x, y]);
       gameboard[y][x] = 'X';
       result = 'MISS!';
     }
+    missedAttacks.push([x, y]);
     return result;
   };
 
@@ -121,6 +135,8 @@ const gameboardFactory = () => {
     shipCounter,
     placeCpuShips,
     getShipType,
+    missedAttacks,
+    isArrayInArray,
   };
 };
 

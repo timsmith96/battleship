@@ -148,3 +148,11 @@ h1 {
 .miss {
   background: #111827 !important;
 }
+
+.invalid-hover {
+  cursor: not-allowed;
+}
+
+.valid-hover {
+  cursor: pointer;
+}

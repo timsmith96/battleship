@@ -39,6 +39,8 @@ const gameloop = () => {
         humanGameboard.getShipLength()
       );
       if (DOM.isValidShipHover(cellsToColor, [x, y], humanCells)) {
+        humanCells.forEach((cell) => cell.classList.remove('invalid-hover'));
+        humanCells.forEach((cell) => cell.classList.add('valid-hover'));
         const img = document.createElement('img');
         const axis = DOM.getAxis();
         if (axis) {
@@ -53,6 +55,9 @@ const gameloop = () => {
         for (let i = 1; i < cellsToColor.length; i++) {
           humanCells[cellsToColor[i]].style.backgroundColor = 'transparent';
         }
+      } else {
+        humanCells.forEach((cell) => cell.classList.remove('valid-hover'));
+        humanCells.forEach((cell) => cell.classList.add('invalid-hover'));
       }
     });
 
@@ -117,11 +122,13 @@ const gameloop = () => {
         );
         DOM.hideElement('change-axis');
         humanCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
+        cpuCells.forEach((cell) => (cell.style.pointerEvents = 'auto'));
       }
     });
   });
 
   cpuCells.forEach((cell) => {
+    cell.style.pointerEvents = 'none';
     cell.addEventListener('click', (e) => {
       if (humanGameboard.allShipsPlaced()) {
         cpuCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
@@ -134,11 +141,14 @@ const gameloop = () => {
             e.target.classList.add('hit');
           } else if (attackResult === 'MISS!') {
             e.target.classList.add('miss');
+          } else if (attackResult === 'SHIP SUNK!') {
+            console.log('ship sunk');
+            e.target.classList.add('hit');
           }
         }, 1000);
         DOM.updateNarration('human-narration', attackResult, 'cpu-narration');
         setTimeout(() => {
-          const arr = computer.makeMove(humanGameboard);
+          const arr = computer.makeMove(humanGameboard, computer, cpuGameboard);
           const [x, y] = arr[0];
           attackResult = arr[1];
           const target = humanCells.find(
@@ -154,6 +164,9 @@ const gameloop = () => {
               // target.firstChild.classList.add('hit');
             } else if (attackResult === 'MISS!') {
               target.classList.add('miss');
+            } else if (attackResult === 'SHIP SUNK!') {
+              console.log('ship sunk');
+              target.classList.add('hit');
             }
           }, 1000);
           setTimeout(() => {
@@ -172,7 +185,15 @@ const gameloop = () => {
           }, 3000);
         }, '2500');
         if (cpuGameboard.allShipsSunk() || humanGameboard.allShipsSunk()) {
-          console.log('Game over! All ships sunk');
+          setTimeout(() => {
+            DOM.editText('human-narration', 'GAME OVER! ALL SHIPS SUNK!');
+            DOM.editText('cpu-narration', '');
+            DOM.editText('human-narration', '');
+            DOM.editText('instruction', 'Game over! All ships sunk!');
+            cpuCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
+            humanCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
+          }, '2501');
+          return;
         }
       } else {
         return;
