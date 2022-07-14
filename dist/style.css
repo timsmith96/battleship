@@ -17,6 +17,13 @@ h1 {
   padding: 20px;
 }
 
+h4 {
+  text-align: center;
+  font-size: 30px;
+  padding: 20px;
+  font-family: 'Black Ops One', cursive;
+}
+
 .text-container {
   margin-bottom: 50px;
   position: relative;
@@ -120,9 +127,9 @@ h1 {
   font-family: 'Black Ops One', cursive;
 }
 
-.clickable-cell.ship-cell {
+/* .clickable-cell.ship-cell {
   background-color: #1e3a8a;
-}
+} */
 
 .human-cell.ship-cell {
   background-color: #2563eb;
@@ -155,4 +162,8 @@ h1 {
 
 .valid-hover {
   cursor: pointer;
+}
+
+.hide-me {
+  visibility: hidden;
 }

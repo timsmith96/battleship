@@ -130,14 +130,20 @@ const gameloop = () => {
   cpuCells.forEach((cell) => {
     cell.style.pointerEvents = 'none';
     cell.addEventListener('click', (e) => {
+      console.log(cpuGameboard);
       if (humanGameboard.allShipsPlaced()) {
         cpuCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
         DOM.hideElement('instruction');
-        const coords = DOM.getCoords(e);
+        let x = e.currentTarget.dataset.x;
+        let y = e.currentTarget.dataset.y;
+        const coords = [x, y];
         let attackResult = human.makeMove(cpuGameboard, coords);
         setTimeout(() => {
           // DOM.updateCell(e.target, coords, cpuGameboard);
           if (attackResult === 'SHIP HIT!') {
+            if (e.target.nodeName === 'IMG') {
+              e.target.parentNode.classList.add('hit');
+            }
             e.target.classList.add('hit');
           } else if (attackResult === 'MISS!') {
             e.target.classList.add('miss');
@@ -184,16 +190,12 @@ const gameloop = () => {
             });
           }, 3000);
         }, '2500');
-        if (cpuGameboard.allShipsSunk() || humanGameboard.allShipsSunk()) {
-          setTimeout(() => {
-            DOM.editText('human-narration', 'GAME OVER! ALL SHIPS SUNK!');
-            DOM.editText('cpu-narration', '');
-            DOM.editText('human-narration', '');
-            DOM.editText('instruction', 'Game over! All ships sunk!');
-            cpuCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
-            humanCells.forEach((cell) => (cell.style.pointerEvents = 'none'));
-          }, '2501');
-          return;
+        if (cpuGameboard.allShipsSunk()) {
+          const text = document.querySelector('.text-container');
+          text.innerHTML = `<h4>CONGRATULATIONS! You sunk all the enemies ships!</h4>`;
+        } else if (humanGameboard.allShipsSunk()) {
+          const text = document.querySelector('.text-container');
+          text.innerHTML = `<h4>OH DEAR! The enemy sunk all your ships!</h4>`;
         }
       } else {
         return;

@@ -109,6 +109,7 @@ const DOM = (() => {
   const isValidShipHover = (cellsToColor, coords, cellsArray) => {
     const length = cellsToColor.length;
     const startingSquare = xAxisSelected ? coords[0] : coords[1];
+    console.log(startingSquare, length);
     if (+startingSquare + +length <= 10) {
       if (!shipOverlap(cellsToColor, cellsArray)) {
         return true;
@@ -198,6 +199,7 @@ const DOM = (() => {
     updateNarration,
     editText,
     hideElement,
+    convertCoordsToNums,
   };
 })();
 
