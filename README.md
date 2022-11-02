@@ -1,6 +1,6 @@
 # Battleship
 
-Battleship game implementation, built using vanilla JavaScript. Also makes use of the Jest testing framework.
+Battleship game implementation, built using vanilla JavaScript. Also makes use of the Jest testing framework. Makes use of:
 
 - JavaScript
 - HTML
